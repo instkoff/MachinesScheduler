@@ -6,9 +6,9 @@ namespace MachinesScheduler.BL.Models
 {
     public class Machine
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        private List<Time> TimeList { get; set; }
+        public int Id { get; }
+        public string Name { get; }
+        public List<Time> TimeList { get; set; }
         public List<Batch> WorksList { get; set; }
         private int CurrentLoad { get; set; }
 
@@ -44,24 +44,11 @@ namespace MachinesScheduler.BL.Models
             CurrentLoad = 0;
         }
 
-        public bool CanProccessNomenclature(int id)
-        {
-            if (TimeList.Select(time => time.Nomenclature.Id == id).FirstOrDefault()) return true;
-            return false;
-        }
-
-        public void AddTime(Time time)
-        {
-            if (!CanProccessNomenclature(time.Nomenclature.Id))
-            {
-                TimeList.Add(time);
-            }
-        }
 
         public int GetProcessTimeById(int id)
         {
             if (TimeList != null)
-                return (TimeList.Where(time => time.Nomenclature.Id == id).Select(time => time.ProcessingTime))
+                return (TimeList.Where(time => time.Nomenclature.Id == id).Select(time => time.OperationTime))
                     .FirstOrDefault();
             return 0;
         }
@@ -85,7 +72,7 @@ namespace MachinesScheduler.BL.Models
 
         public override string ToString()
         {
-            return Id.ToString() + " - " + Name;
+            return Id.ToString() + " - " + Name + " \n              " + string.Join("\n              ", TimeList);
         }
 
     }
