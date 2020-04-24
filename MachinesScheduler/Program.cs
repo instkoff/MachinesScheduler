@@ -9,7 +9,7 @@ namespace MachinesScheduler
         {
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             var data = new Data();
-            Console.WriteLine(string.Join("\n", data.MachinesList));
+            Console.WriteLine(string.Join("\n", data.BatchesQueue));
             Console.ReadLine();
         }
     }

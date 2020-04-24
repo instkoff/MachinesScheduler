@@ -32,14 +32,16 @@ namespace MachinesScheduler.BL
             var rows = dataSet.Tables[0].Rows;
             for (var i = 1; i < rowsCount; i++)
             {
-                if (int.TryParse(rows[i].ItemArray[0].ToString(), out var id))
+                var nomeclatureIdCell = rows[i].ItemArray[0].ToString();
+                var nomeclatureNameCell = rows[i].ItemArray[1].ToString();
+                if (int.TryParse(nomeclatureIdCell, out var id) && !string.IsNullOrEmpty(nomeclatureNameCell))
                 {
-                    var nomenclature = new Nomenclature(id, rows[i].ItemArray[1].ToString());
+                    var nomenclature = new Nomenclature(id, nomeclatureNameCell);
                     NomenclaturesList.Add(nomenclature);
                 }
                 else
                 {
-                    Console.WriteLine($"Не удалось прочитать номенклатуру под номером {i}");
+                    Console.WriteLine($"Не удалось прочитать номенклатуру под номером {i-1}");
                 }
             }
         }
@@ -64,7 +66,7 @@ namespace MachinesScheduler.BL
                 }
                 else
                 {
-                    Console.WriteLine($"Не удалось прочитать партию под номером {i}");
+                    Console.WriteLine($"Не удалось прочитать партию под номером {i-1}");
                 }
             }
         }
@@ -92,7 +94,7 @@ namespace MachinesScheduler.BL
                 }
                 else
                 {
-                    Console.WriteLine($"Не удалось прочитать время обработки под номером {i}");
+                    Console.WriteLine($"Не удалось прочитать время обработки под номером {i-1}");
                 }
             }
         }
@@ -114,7 +116,7 @@ namespace MachinesScheduler.BL
                 }
                 else
                 {
-                    Console.WriteLine($"Не удалось прочитать оборудование под номером {i}");
+                    Console.WriteLine($"Не удалось прочитать оборудование под номером {i-1}");
                 }
             }
         }

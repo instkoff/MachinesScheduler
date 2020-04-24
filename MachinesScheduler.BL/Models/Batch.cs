@@ -22,5 +22,10 @@ namespace MachinesScheduler.BL.Models
             Id = id;
             Nomenclature = nomenclature;
         }
+
+        public override string ToString()
+        {
+            return Id + " " + Nomenclature.Name;
+        }
     }
 }
