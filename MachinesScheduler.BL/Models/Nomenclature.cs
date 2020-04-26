@@ -1,37 +1,17 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 
 namespace MachinesScheduler.BL.Models
 {
     public class Nomenclature
     {
+        [JsonProperty("Column0")]
         public int Id { get; set; }
+        [JsonProperty("Column1")]
         public string Name { get; set; }
 
-        public Nomenclature()
+        public override string ToString()
         {
-            
-        }
-
-        public Nomenclature(int id, string name)
-        {
-            if (id < 0)
-            {
-                throw new ArgumentException("Id не может быть меньше нуля.", nameof(id));
-            }
-
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException("Имя оборудования должно быть заполнено", nameof(name));
-            }
-
-            if (name.Length > 255)
-            {
-                throw new ArgumentOutOfRangeException("Имя не должно быть больше 255 символов.", nameof(name));
-            }
-
-            Id = id;
-            Name = name;
-
+            return Id + " " + Name;
         }
     }
 }

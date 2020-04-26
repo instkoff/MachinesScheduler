@@ -1,27 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 
 namespace MachinesScheduler.BL.Models
 {
     public class Batch
     {
-        public int Id { get; }
-        public Nomenclature Nomenclature { get; }
+        [JsonProperty("Column0")]
+        public int Id { get; set; }
 
-        public Batch()
-        {
-            
-        }
-
-        public Batch(int id, Nomenclature nomenclature)
-        {
-            if (id < 0)
-                throw new ArgumentException("Id не может быть меньше нуля.", nameof(id));
-            if(nomenclature == null)
-                throw new ArgumentNullException("Номенклатура должна быть заполнена.", nameof(nomenclature));
-
-            Id = id;
-            Nomenclature = nomenclature;
-        }
+        [JsonProperty("Column1")] 
+        public int NomenclatureId { get; set; }
+        public Nomenclature Nomenclature { get; set; }
 
         public override string ToString()
         {

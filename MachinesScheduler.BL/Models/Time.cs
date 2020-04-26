@@ -1,34 +1,30 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace MachinesScheduler.BL.Models
 {
-    public class Time
+    public class Time : IComparable
     {
-        public Nomenclature Nomenclature { get; }
-        public int MachineId { get; }
-        public int OperationTime { get; }
-
-        public Time()
-        {
-            
-        }
-
-        public Time(Nomenclature nomenclature, int operationTime, int machineId)
-        {
-            if (nomenclature == null)
-                throw new ArgumentNullException("Номенклатура должна быть заполнена.", nameof(nomenclature));
-            if (operationTime < 0)
-                throw new ArgumentException("Время обработки не может быть меньше нуля.", nameof(operationTime));
-            if (machineId < 0)
-                throw new ArgumentException("Id машины не может быть меньше нуля.", nameof(operationTime));
-            MachineId = machineId;
-            Nomenclature = nomenclature;
-            OperationTime = operationTime;
-        }
+        [JsonProperty("Column0")]
+        public int MachineId { get; set; }
+        [JsonProperty("Column1")]
+        public int Nomenclatureid { get; set; }
+        [JsonProperty("Column2")]
+        public int OperationTime { get; set; }
+        public Nomenclature Nomenclature { get; set; }
 
         public override string ToString()
         {
             return Nomenclature.Name + " - " + OperationTime;
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj is Time t)
+            {
+                return OperationTime.CompareTo(t.OperationTime);
+            }
+            throw new Exception("Невозможно сравнить это оборудование");
         }
     }
 }
