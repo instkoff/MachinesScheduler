@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using ExcelDataReader;
 using MachinesScheduler.BL.Interfaces;
+using MachinesScheduler.BL.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OfficeOpenXml;
 using Formatting = Newtonsoft.Json.Formatting;
+using LicenseContext = OfficeOpenXml.LicenseContext;
 
 namespace MachinesScheduler.BL.Services
 {
     public class ExcelDataService : ILoadDataService
     {
-        public IEnumerable<T> Load<T>(string path) where T : class
+        public IEnumerable<T> Import<T>(string path) where T : class
         {
             try
             {
@@ -39,6 +43,58 @@ namespace MachinesScheduler.BL.Services
                 throw;
             }
         }
+
+        public string Export(IEnumerable<Schedule> schedule)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            try
+            {
+                var file = new FileInfo(@"График обработки.xlsx");
+                if (file.Exists)
+                {
+                    file.Delete();
+                }
+                using (var package = new ExcelPackage(file))
+                {
+                    var workSheet = package.Workbook.Worksheets.Add("Общий план");
+                    workSheet.Cells["A1"].Value = "Партия";
+                    workSheet.Cells["B1"].Value = "Оборудование";
+                    workSheet.Cells["C1"].Value = "Время начала обработки";
+                    workSheet.Cells["D1"].Value = "Время конца обработки";
+                    workSheet.Column(1).Width = 15;
+                    workSheet.Column(2).Width = 15;
+                    workSheet.Column(3).Width = 24;
+                    workSheet.Column(4).Width = 24;
+                    var generalSchedule = schedule.ToList();
+                    workSheet.Cells[2, 1].LoadFromCollection(generalSchedule, false);
+
+                    var machines = generalSchedule.Select(m => m.Machine).Distinct().OrderBy(m => m.Name);
+
+                    foreach (var machine in machines)
+                    {
+                        var machineWorkSheet = package.Workbook.Worksheets.Add($"{machine.Name}");
+                        machineWorkSheet.Cells["A1"].Value = "Партия";
+                        machineWorkSheet.Cells["B1"].Value = "Оборудование";
+                        machineWorkSheet.Cells["C1"].Value = "Время начала обработки";
+                        machineWorkSheet.Cells["D1"].Value = "Время конца обработки";
+                        machineWorkSheet.Column(1).Width = 15;
+                        machineWorkSheet.Column(2).Width = 15;
+                        machineWorkSheet.Column(3).Width = 24;
+                        machineWorkSheet.Column(4).Width = 24;
+                        machineWorkSheet.Cells[2, 1].LoadFromCollection(generalSchedule.Where(m => m.Machine == machine));
+                    }
+                    package.SaveAs(file);
+                    System.Diagnostics.Process.Start("explorer.exe", "/select," + file);
+                    return file.FullName;
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine($"Не могу получить доступ к файлу \n {e.Message}");
+                throw;
+            }
+        }
+
         private class CustomIntConverter : JsonConverter
         {
             public override bool CanConvert(Type objectType)

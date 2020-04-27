@@ -18,8 +18,9 @@ namespace MachinesScheduler
         public void Run(IConfiguration config)
         {
             var scheduleService = new BuildScheduleService(new PreparedExcelData(_dataService, config));
-            var schedule = scheduleService.BuildSchedule().ToList();
-            Console.WriteLine(string.Join("\n", schedule));
+            var schedule = scheduleService.BuildSchedule();
+            var fileName =_dataService.Export(schedule);
+            Console.WriteLine(string.Join("\n", fileName));
         }
     }
 }

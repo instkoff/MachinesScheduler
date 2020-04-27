@@ -13,7 +13,7 @@ namespace MachinesScheduler.BL.Models
 
         public override string ToString()
         {
-            return Id + " " + Nomenclature.Name;
+            return Nomenclature.Name;
         }
     }
 }

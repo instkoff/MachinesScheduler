@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using MachinesScheduler.BL.Models;
 
 namespace MachinesScheduler.BL.Interfaces
 {
     public interface ILoadDataService
     {
-        IEnumerable<T> Load<T>(string path) where T: class;
+        string Export(IEnumerable<Schedule> schedule);
+        IEnumerable<T> Import<T>(string path) where T: class;
     }
 }

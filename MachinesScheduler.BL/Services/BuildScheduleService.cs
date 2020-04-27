@@ -8,7 +8,7 @@ namespace MachinesScheduler.BL.Services
     public class BuildScheduleService
     {
         private readonly IPrepareDadaService _dataAccessFromExcel;
-
+        private Data _data;
         public BuildScheduleService(IPrepareDadaService dataAccessFromExcel)
         {
             _dataAccessFromExcel = dataAccessFromExcel;
@@ -16,12 +16,12 @@ namespace MachinesScheduler.BL.Services
 
         public IEnumerable<Schedule> BuildSchedule()
         {
-            var data =_dataAccessFromExcel.PrepearingData();
+            _data =_dataAccessFromExcel.PrepearingData();
             var generalSchedule = new List<Schedule>();
-            while (data.BatchesQueue.Any())
+            while (_data.BatchesQueue.Any())
             {
-                var batch = data.BatchesQueue.Dequeue();
-                var suitableMachines = data.MachinesList.Where(m => m.TimeDictionary.ContainsKey(batch.NomenclatureId)).ToList();
+                var batch = _data.BatchesQueue.Dequeue();
+                var suitableMachines = _data.MachinesList.Where(m => m.TimeDictionary.ContainsKey(batch.NomenclatureId)).ToList();
                 var bestMachine = suitableMachines.Aggregate((l, r) =>
                     l.TimeDictionary[batch.NomenclatureId] < r.TimeDictionary[batch.NomenclatureId] ? l : r);
                 if (bestMachine.CurrentLoad == 0)
@@ -40,11 +40,7 @@ namespace MachinesScheduler.BL.Services
                     generalSchedule.Add(scheduleItem);
                 }
             }
-
             return generalSchedule;
         }
-
-
-
     }
 }

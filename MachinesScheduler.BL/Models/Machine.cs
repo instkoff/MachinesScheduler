@@ -11,7 +11,7 @@ namespace MachinesScheduler.BL.Models
         [JsonProperty("Column1")]
         public string Name { get; set; }
         public Dictionary<int,int> TimeDictionary { get; set; }
-        public List<Batch> WorksList { get; set; }
+        public List<Batch> WorksList { get; }
         public int CurrentLoad { get; set; }
 
         public Machine()
@@ -34,7 +34,7 @@ namespace MachinesScheduler.BL.Models
 
         public override string ToString()
         {
-            return Id.ToString() + " - " + Name + " \n              " + string.Join("\n              ", WorksList);
+            return Name;
         }
 
     }

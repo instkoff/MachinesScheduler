@@ -29,7 +29,6 @@ namespace MachinesScheduler
 
             scope.ServiceProvider.GetRequiredService<ConsoleApplication>().Run(config);
             DisposeServices();
-            Console.ReadLine();
         }
 
         private static void RegisterServices()

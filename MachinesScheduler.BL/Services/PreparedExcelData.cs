@@ -23,10 +23,10 @@ namespace MachinesScheduler.BL.Services
 
         public Data PrepearingData()
         {
-            NomenclaturesList = _dataService.Load<Nomenclature>(_configuration["Nomenclature"]).ToList();
-            MachinesList = _dataService.Load<Machine>(_configuration["Machines"]).ToList();
-            TimesList = _dataService.Load<Time>(_configuration["Times"]).ToList();
-            var batches = _dataService.Load<Batch>(_configuration["Batches"]).ToList();
+            NomenclaturesList = _dataService.Import<Nomenclature>(_configuration["Nomenclature"]).ToList();
+            MachinesList = _dataService.Import<Machine>(_configuration["Machines"]).ToList();
+            TimesList = _dataService.Import<Time>(_configuration["Times"]).ToList();
+            var batches = _dataService.Import<Batch>(_configuration["Batches"]).ToList();
 
             batches.ForEach(b => b.Nomenclature = NomenclaturesList.Find(n => n.Id == b.NomenclatureId));
             BatchesQueue = new Queue<Batch>(batches);
