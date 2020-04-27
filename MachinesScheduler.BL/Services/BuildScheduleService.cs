@@ -1,28 +1,27 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using MachinesScheduler.BL.Interfaces;
 using MachinesScheduler.BL.Models;
 
 namespace MachinesScheduler.BL.Services
 {
     public class BuildScheduleService
     {
-        private readonly Data _data;
+        private readonly IPrepareDadaService _dataAccessFromExcel;
 
-        public BuildScheduleService(Data data)
+        public BuildScheduleService(IPrepareDadaService dataAccessFromExcel)
         {
-            _data = data;
+            _dataAccessFromExcel = dataAccessFromExcel;
         }
 
-
-        public List<Schedule> BuildSchedule()
+        public IEnumerable<Schedule> BuildSchedule()
         {
-            _data.PrepearingData();
+            var data =_dataAccessFromExcel.PrepearingData();
             var generalSchedule = new List<Schedule>();
-            while (_data.BatchesQueue.Any())
+            while (data.BatchesQueue.Any())
             {
-                var batch = _data.BatchesQueue.Dequeue();
-                var suitableMachines = _data.MachinesList.Where(m => m.TimeDictionary.ContainsKey(batch.NomenclatureId)).ToList();
+                var batch = data.BatchesQueue.Dequeue();
+                var suitableMachines = data.MachinesList.Where(m => m.TimeDictionary.ContainsKey(batch.NomenclatureId)).ToList();
                 var bestMachine = suitableMachines.Aggregate((l, r) =>
                     l.TimeDictionary[batch.NomenclatureId] < r.TimeDictionary[batch.NomenclatureId] ? l : r);
                 if (bestMachine.CurrentLoad == 0)

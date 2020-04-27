@@ -1,5 +1,5 @@
 ﻿using System;
-using MachinesScheduler.BL;
+using System.Linq;
 using MachinesScheduler.BL.Interfaces;
 using MachinesScheduler.BL.Services;
 using Microsoft.Extensions.Configuration;
@@ -17,8 +17,8 @@ namespace MachinesScheduler
 
         public void Run(IConfiguration config)
         {
-            var scheduleService = new BuildScheduleService(new Data(_dataService, config));
-            var schedule = scheduleService.BuildSchedule();
+            var scheduleService = new BuildScheduleService(new PreparedExcelData(_dataService, config));
+            var schedule = scheduleService.BuildSchedule().ToList();
             Console.WriteLine(string.Join("\n", schedule));
         }
     }

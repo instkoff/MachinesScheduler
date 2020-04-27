@@ -11,7 +11,7 @@ namespace MachinesScheduler.BL.Services
 {
     public class ExcelDataService : ILoadDataService
     {
-        public IList<T> Load<T>(string path) where T : class
+        public IEnumerable<T> Load<T>(string path) where T : class
         {
             try
             {
@@ -26,7 +26,7 @@ namespace MachinesScheduler.BL.Services
                         {
                             Converters = new List<JsonConverter> { new CustomIntConverter() }
                         };
-                        return JsonConvert.DeserializeObject<IList<T>>(json,settings);
+                        return JsonConvert.DeserializeObject<IEnumerable<T>>(json,settings);
 
                     }
                 }
@@ -50,11 +50,11 @@ namespace MachinesScheduler.BL.Services
             {
                 JValue jsonValue = serializer.Deserialize<JValue>(reader);
 
-                if (jsonValue.Type == JTokenType.Float)
+                if (jsonValue != null && jsonValue.Type == JTokenType.Float)
                 {
                     return (int)Math.Round(jsonValue.Value<double>());
                 }
-                else if (jsonValue.Type == JTokenType.Integer)
+                else if (jsonValue != null && jsonValue.Type == JTokenType.Integer)
                 {
                     return jsonValue.Value<int>();
                 }
