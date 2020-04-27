@@ -8,6 +8,7 @@ using MachinesScheduler.BL.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
+using Serilog;
 using Formatting = Newtonsoft.Json.Formatting;
 using LicenseContext = OfficeOpenXml.LicenseContext;
 
@@ -26,19 +27,19 @@ namespace MachinesScheduler.BL.Services
                         var dataTable = reader.AsDataSet().Tables[0];
                         dataTable.Rows.RemoveAt(0);
                         var json = JsonConvert.SerializeObject(dataTable, Formatting.Indented);
-                        JsonSerializerSettings settings = new JsonSerializerSettings
+                        var settings = new JsonSerializerSettings
                         {
-                            Converters = new List<JsonConverter> { new CustomIntConverter() }
+                            Converters = new List<JsonConverter> {new CustomIntConverter()}
                         };
-                        return JsonConvert.DeserializeObject<IEnumerable<T>>(json,settings);
-
+                        return JsonConvert.DeserializeObject<IEnumerable<T>>(json, settings);
                     }
                 }
 
             }
             //ToDO Изменить exception
-            catch (Exception e)
+            catch (IOException e)
             {
+                Log.Error(e.Message);
                 Console.WriteLine(e.Message);
                 throw;
             }
@@ -90,7 +91,8 @@ namespace MachinesScheduler.BL.Services
             }
             catch (IOException e)
             {
-                Console.WriteLine($"Не могу получить доступ к файлу \n {e.Message}");
+                Log.Error(e.Message);
+                //Console.WriteLine($"Не могу получить доступ к файлу \n {e.Message}");
                 throw;
             }
         }

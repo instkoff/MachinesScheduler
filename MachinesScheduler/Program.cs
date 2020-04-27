@@ -5,6 +5,7 @@ using MachinesScheduler.BL.Interfaces;
 using MachinesScheduler.BL.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace MachinesScheduler
 {
@@ -26,7 +27,10 @@ namespace MachinesScheduler
             IConfiguration config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", true, true)
                 .Build();
-
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(config)
+                .CreateLogger();
+            Log.Warning("Programm start");
             scope.ServiceProvider.GetRequiredService<ConsoleApplication>().Run(config);
             DisposeServices();
         }
