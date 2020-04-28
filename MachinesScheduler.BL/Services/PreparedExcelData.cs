@@ -2,7 +2,6 @@
 using System.Linq;
 using MachinesScheduler.BL.Interfaces;
 using MachinesScheduler.BL.Models;
-using Microsoft.Extensions.Configuration;
 using Serilog;
 
 namespace MachinesScheduler.BL.Services
@@ -13,20 +12,22 @@ namespace MachinesScheduler.BL.Services
     public class PreparedExcelData : IPrepareDadaService
     {
         private readonly IImportDataService _dataService;
-        private readonly IConfiguration _configuration;
+        private readonly FilesSettings _filesSettings;
+
         private List<Time> TimesList { get; set; }
         private List<Nomenclature> NomenclaturesList { get; set; }
         private Queue<Batch> BatchesQueue { get; set; }
         private List<Machine> MachinesList { get; set; }
+
         /// <summary>
         /// Конструктор
         /// </summary>
         /// <param name="dataService">Экземпляр интерфейса для получения необработанных данных откуда либо.</param>
-        /// <param name="config">Экземпляр объекта конфигурации для получения названий файлов.</param>
-        public PreparedExcelData(IImportDataService dataService, IConfiguration config)
+        /// <param name="filesSettings">Экземпляр объекта конфигурации для получения названий файлов.</param>
+        public PreparedExcelData(IImportDataService dataService, FilesSettings filesSettings)
         {
             _dataService = dataService;
-            _configuration = config;
+            _filesSettings = filesSettings;
         }
         /// <summary>
         /// 
@@ -35,10 +36,10 @@ namespace MachinesScheduler.BL.Services
         public Data PrepearingData()
         {
             //Импортируем данные из эксель.
-            NomenclaturesList = _dataService.Import<Nomenclature>(_configuration["Nomenclature"]).ToList();
-            MachinesList = _dataService.Import<Machine>(_configuration["Machines"]).ToList();
-            TimesList = _dataService.Import<Time>(_configuration["Times"]).ToList();
-            var batches = _dataService.Import<Batch>(_configuration["Batches"]).ToList();
+            NomenclaturesList = _dataService.Import<Nomenclature>(_filesSettings.NomenclatureFile).ToList();
+            MachinesList = _dataService.Import<Machine>(_filesSettings.MachinesFile).ToList();
+            TimesList = _dataService.Import<Time>(_filesSettings.TimesFile).ToList();
+            var batches = _dataService.Import<Batch>(_filesSettings.BatchesFile).ToList();
             //Заполняем очередь партий, проставляем ссылки на нужные объекты при необходимости.
             batches.ForEach(b => b.Nomenclature = NomenclaturesList.Find(n => n.Id == b.NomenclatureId));
             BatchesQueue = new Queue<Batch>(batches);

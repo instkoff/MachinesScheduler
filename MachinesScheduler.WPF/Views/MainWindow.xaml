@@ -1,0 +1,55 @@
+﻿<Window
+    x:Class="MachinesScheduler.WPF.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MachinesScheduler.WPF.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Main Window"
+    Width="750"
+    Height="900"
+    DataContext="{Binding Source={StaticResource Locator}, Path=MainViewModel}"
+    FontSize="20"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <Grid>
+        <ScrollViewer PreviewMouseWheel="UIElement_OnPreviewMouseWheel">
+            <StackPanel CanVerticallyScroll="True" >
+                <ItemsControl Margin="10"
+                              ItemsSource="{Binding RectItems}">
+                    <!--http://msdn.microsoft.com/en-us/library/system.windows.controls.itemscontrol.aspx-->
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Rectangle Width="{Binding Width}" Height="{Binding Height}" Fill="Red"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+
+                    <ItemsControl.ItemContainerStyle>
+                        <Style>
+                            <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                </ItemsControl>
+                <!--<DataGrid Width="713" HorizontalAlignment="Left" AutoGenerateColumns="False" ItemsSource="{Binding Schedules}" IsReadOnly="True" SelectionMode="Single" CanUserReorderColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Партия" Binding="{Binding Batch}"/>
+                        <DataGridTextColumn Header="Оборудование" Binding="{Binding Machine}"/>
+                        <DataGridTextColumn Header="Время начала обработки" Binding="{Binding StartTime}"/>
+                        <DataGridTextColumn Header="Время конца обработки" Binding="{Binding EndTime}" />
+                    </DataGrid.Columns>
+                </DataGrid>-->
+            </StackPanel>
+
+        </ScrollViewer>
+
+
+    </Grid>
+</Window>

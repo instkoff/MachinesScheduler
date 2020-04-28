@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using MachinesScheduler.BL.Interfaces;
+using MachinesScheduler.BL.Models;
 using MachinesScheduler.BL.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,22 +12,10 @@ using Serilog;
 namespace MachinesScheduler
 {
     class Program
-    {
-        private static IConfigurationRoot Configuration { get; set; }
-
-        static void Main(string[] args)
+    { static void Main(string[] args)
         {
             //Необходимо для работы с ExcelDataReader
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json");
-
-            Configuration = builder.Build();
-            Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(Configuration)
-                .CreateLogger();
 
             try
             {
@@ -44,10 +33,17 @@ namespace MachinesScheduler
         }
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             new HostBuilder()
+                .ConfigureAppConfiguration((hostContext, builder) =>
+                {
+                    builder.AddJsonFile("appsettings.json", optional: true);
+                })
                 .ConfigureServices((hostContext, services) =>
                     {
+                        Log.Logger = new LoggerConfiguration()
+                            .ReadFrom.Configuration(hostContext.Configuration)
+                            .CreateLogger();
                         services
-                            .AddSingleton<IConfiguration>(Configuration)
+                            .Configure<FilesSettings>(hostContext.Configuration.GetSection(nameof(FilesSettings)))
                             .AddHostedService<ConsoleApplication>()
                             .AddScoped<IImportDataService, ImportFromExcelDataService>()
                             .AddScoped<IExportDataService, ExportToExcelDataService>();

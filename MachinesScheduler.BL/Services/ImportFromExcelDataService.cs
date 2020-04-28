@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using ExcelDataReader;
 using MachinesScheduler.BL.Interfaces;
-using MachinesScheduler.BL.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using OfficeOpenXml;
 using Formatting = Newtonsoft.Json.Formatting;
-using LicenseContext = OfficeOpenXml.LicenseContext;
 
 namespace MachinesScheduler.BL.Services
 {
@@ -103,22 +99,27 @@ namespace MachinesScheduler.BL.Services
                 }
             }
             //Обработка различных исключений.
+            catch(ArgumentNullException e)
+            {
+                _logger.LogError(e, $"path не может быть пуст.");
+                throw;
+            }
             catch (IOException e)
             {
                 _logger.LogError(e, $"Не могу получить доступ к файлу {path}. Возможно файл открыт в другой программе.");
-                Console.ReadKey();
+                //Console.ReadKey();
                 throw;
             }
             catch (FormatException e)
             {
                 _logger.LogError(e.Message);
-                Console.ReadKey();
+                //Console.ReadKey();
                 throw;
             }
             catch (JsonSerializationException e)
             {
                 _logger.LogError(e.Message);
-                Console.ReadKey();
+                //Console.ReadKey();
                 throw;
             }
         }
