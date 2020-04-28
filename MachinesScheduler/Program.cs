@@ -49,8 +49,8 @@ namespace MachinesScheduler
                         services
                             .AddSingleton<IConfiguration>(Configuration)
                             .AddHostedService<ConsoleApplication>()
-                            .AddTransient<IImportDataService, ImportFromExcelDataService>()
-                            .AddTransient<IExportDataService, ExportToExcelDataService>();
+                            .AddScoped<IImportDataService, ImportFromExcelDataService>()
+                            .AddScoped<IExportDataService, ExportToExcelDataService>();
 
                     }
                 )

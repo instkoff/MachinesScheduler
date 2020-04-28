@@ -28,7 +28,6 @@ namespace MachinesScheduler.BL.Services
             _dataService = dataService;
             _configuration = config;
         }
-
         /// <summary>
         /// 
         /// </summary>
