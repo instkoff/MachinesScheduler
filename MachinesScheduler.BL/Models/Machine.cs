@@ -4,14 +4,22 @@ using Newtonsoft.Json;
 
 namespace MachinesScheduler.BL.Models
 {
+    /// <summary>
+    /// Класс оборудования
+    /// </summary>
     public class Machine : IComparable
     {
+        //Id
         [JsonProperty("Column0")]
         public int Id { get; set; }
+        //Название
         [JsonProperty("Column1")]
         public string Name { get; set; }
+        //Словарь по которому удобно находить время обработки по Id номенклатуры
         public Dictionary<int,int> TimeDictionary { get; set; }
+        //Список партия для экземпляра оборудования
         public List<Batch> WorksList { get; }
+        //Текущая загрузка оборудования
         public int CurrentLoad { get; set; }
 
         public Machine()
@@ -23,6 +31,11 @@ namespace MachinesScheduler.BL.Models
             CurrentLoad = 0;
         }
 
+        /// <summary>
+        /// Сравнение оборудования между собой по нагрузке
+        /// </summary>
+        /// <param name="obj">Машина для сравнения</param>
+        /// <returns></returns>
         public int CompareTo(object obj)
         {
             if (obj is Machine m)

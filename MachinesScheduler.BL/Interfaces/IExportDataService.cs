@@ -3,9 +3,11 @@ using MachinesScheduler.BL.Models;
 
 namespace MachinesScheduler.BL.Interfaces
 {
-    public interface ILoadDataService
+    /// <summary>
+    /// Интерфейс для экспорта данных куда либо.
+    /// </summary>
+    public interface IExportDataService
     {
         string Export(IEnumerable<Schedule> schedule);
-        IEnumerable<T> Import<T>(string path) where T: class;
     }
 }

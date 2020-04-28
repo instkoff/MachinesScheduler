@@ -1,26 +1,40 @@
 ﻿using System;
-using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using MachinesScheduler.BL.Interfaces;
 using MachinesScheduler.BL.Services;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace MachinesScheduler
 {
-    internal class ConsoleApplication
+    public class ConsoleApplication : IHostedService
     {
-        private readonly ILoadDataService _dataService;
+        private readonly IImportDataService _importDataService;
+        private readonly IExportDataService _exportDataService;
+        private readonly IConfiguration _config;
 
-        public ConsoleApplication(ILoadDataService dataService)
+        public ConsoleApplication(IImportDataService importDataService, IExportDataService exportDataService, IConfiguration config)
         {
-            _dataService = dataService;
+            _importDataService = importDataService;
+            _exportDataService = exportDataService;
+            _config = config;
         }
 
-        public void Run(IConfiguration config)
+        public Task StartAsync(CancellationToken cancellationToken)
         {
-            var scheduleService = new BuildScheduleService(new PreparedExcelData(_dataService, config));
+            var scheduleService = new BuildScheduleService(new PreparedExcelData(_importDataService, _config.GetSection("FilesSettings")));
             var schedule = scheduleService.BuildSchedule();
-            var fileName =_dataService.Export(schedule);
-            Console.WriteLine(string.Join("\n", fileName));
+            var fileName = _exportDataService.Export(schedule);
+            Log.Information($"Файл с расписанием: {fileName}");
+            return Task.CompletedTask;
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
         }
     }
 }

@@ -5,54 +5,58 @@ using MachinesScheduler.BL.Interfaces;
 using MachinesScheduler.BL.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace MachinesScheduler
 {
     class Program
     {
-        private static IServiceProvider _serviceProvider;
+        private static IConfigurationRoot Configuration { get; set; }
+
         static void Main(string[] args)
         {
             //Необходимо для работы с ExcelDataReader
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            RegisterServices();
-            var scope = _serviceProvider.CreateScope();
-
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json");
 
-            IConfiguration config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", true, true)
-                .Build();
+            Configuration = builder.Build();
             Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(config)
+                .ReadFrom.Configuration(Configuration)
                 .CreateLogger();
-            Log.Warning("Programm start");
-            scope.ServiceProvider.GetRequiredService<ConsoleApplication>().Run(config);
-            DisposeServices();
-        }
 
-        private static void RegisterServices()
-        {
-            var services = new ServiceCollection();
-            services.AddSingleton<ConsoleApplication>();
-            services.AddSingleton<ILoadDataService, ExcelDataService>();
-            _serviceProvider = services.BuildServiceProvider(true);
-        }
-
-        private static void DisposeServices()
-        {
-            if (_serviceProvider == null)
+            try
             {
-                return;
+                Log.Information("Programm start...");
+                CreateHostBuilder(args).RunConsoleAsync();
             }
-            if (_serviceProvider is IDisposable disposable)
+            catch (Exception e)
             {
-                disposable.Dispose();
+                Log.Fatal(e, "Необработанное исключение");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
             }
         }
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
+            new HostBuilder()
+                .ConfigureServices((hostContext, services) =>
+                    {
+                        services
+                            .AddSingleton<IConfiguration>(Configuration)
+                            .AddHostedService<ConsoleApplication>()
+                            .AddTransient<IImportDataService, ImportFromExcelDataService>()
+                            .AddTransient<IExportDataService, ExportToExcelDataService>();
+
+                    }
+                )
+                .ConfigureLogging((hostContext, logging) =>
+                    {
+                        logging.AddSerilog();
+                    });
     }
 }
