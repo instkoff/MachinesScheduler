@@ -5,8 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:MachinesScheduler.WPF.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Main Window"
-    Width="750"
+    Title="Планировщик партий"
+    Width="1100"
     Height="900"
     DataContext="{Binding Source={StaticResource Locator}, Path=MainViewModel}"
     FontSize="20"
@@ -14,10 +14,9 @@
     mc:Ignorable="d">
     <Grid>
         <ScrollViewer PreviewMouseWheel="UIElement_OnPreviewMouseWheel">
-            <StackPanel CanVerticallyScroll="True" >
+            <StackPanel CanVerticallyScroll="True" CanHorizontallyScroll="True">
                 <ItemsControl Margin="10"
                               ItemsSource="{Binding RectItems}">
-                    <!--http://msdn.microsoft.com/en-us/library/system.windows.controls.itemscontrol.aspx-->
 
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -27,7 +26,7 @@
 
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Rectangle Width="{Binding Width}" Height="{Binding Height}" Fill="Red"/>
+                            <Rectangle Width="{Binding Width}" Height="{Binding Height}" Fill= "{Binding Color}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
 
@@ -38,14 +37,52 @@
                         </Style>
                     </ItemsControl.ItemContainerStyle>
                 </ItemsControl>
-                <!--<DataGrid Width="713" HorizontalAlignment="Left" AutoGenerateColumns="False" ItemsSource="{Binding Schedules}" IsReadOnly="True" SelectionMode="Single" CanUserReorderColumns="False">
+                <ItemsControl Margin="10"
+                                      ItemsSource="{Binding TextItems}">
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Width="{Binding Width}" Height="{Binding Height}" Text="{Binding Text}" FontSize="12" TextAlignment="Center" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+
+                    <ItemsControl.ItemContainerStyle>
+                        <Style>
+                            <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                </ItemsControl>
+                <ItemsControl ItemsSource="{Binding Path=TimeLines}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Line X1="{Binding X1}" Y1="{Binding Y1}" X2="{Binding X2}" Y2="{Binding Y2}" Stroke="Black" StrokeThickness="2"></Line>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <DataGrid Width="713" HorizontalAlignment="Left" 
+                AutoGenerateColumns="False" 
+                ItemsSource="{Binding Schedule}" 
+                IsReadOnly="True" SelectionMode="Single" 
+                CanUserReorderColumns="False" Margin="100 260 0 0">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Партия" Binding="{Binding Batch}"/>
                         <DataGridTextColumn Header="Оборудование" Binding="{Binding Machine}"/>
                         <DataGridTextColumn Header="Время начала обработки" Binding="{Binding StartTime}"/>
                         <DataGridTextColumn Header="Время конца обработки" Binding="{Binding EndTime}" />
                     </DataGrid.Columns>
-                </DataGrid>-->
+                </DataGrid>
             </StackPanel>
 
         </ScrollViewer>

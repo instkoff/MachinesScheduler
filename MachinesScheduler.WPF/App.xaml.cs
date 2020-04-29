@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Configuration;
-using System.IO;
 using System.Text;
 using System.Windows;
 using MachinesScheduler.BL.Interfaces;
@@ -22,27 +20,33 @@ namespace MachinesScheduler.WPF
 
         public App()
         {
+            //Создаём узел с настройками
             _host = Host.CreateDefaultBuilder()  
+                //Получаем файл конфигурации
                     .ConfigureAppConfiguration((context, builder) =>
                     {
                         builder.AddJsonFile("appsettings.json", optional: true);
 
-                    }).ConfigureServices((context, services) =>
+                    })
+                //Настраиваем зависимости
+                    .ConfigureServices((context, services) =>
                     {
                         ConfigureServices(context.Configuration, services);
                     })
-                    .ConfigureLogging(logging => { logging.AddSerilog(); })
+                //Настраиваем логгер
+                    .ConfigureLogging((context, logging) =>
+                    {
+                        Log.Logger = new LoggerConfiguration()
+                            .ReadFrom.Configuration(context.Configuration)
+                            .CreateLogger();
+                        logging.AddSerilog();
+                    })
                     .Build();
-
             ServiceProvider = _host.Services;
         }
 
         private void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
-            Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
-
             services.Configure<FilesSettings>(configuration.GetSection(nameof(FilesSettings)));
             services.AddScoped<IImportDataService, ImportFromExcelDataService>();
             services.AddScoped<IExportDataService, ExportToExcelDataService>();

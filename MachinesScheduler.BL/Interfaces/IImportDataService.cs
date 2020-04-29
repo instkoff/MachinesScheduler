@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using MachinesScheduler.BL.Models;
 
 namespace MachinesScheduler.BL.Interfaces
 {

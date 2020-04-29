@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Text;
 using MachinesScheduler.BL.Interfaces;
 using MachinesScheduler.BL.Models;
@@ -12,11 +11,12 @@ using Serilog;
 namespace MachinesScheduler
 {
     class Program
-    { static void Main(string[] args)
+    { 
+        static void Main(string[] args)
         {
             //Необходимо для работы с ExcelDataReader
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
+            //Пытаемся стартануть узел
             try
             {
                 Log.Information("Programm start...");
@@ -31,17 +31,18 @@ namespace MachinesScheduler
                 Log.CloseAndFlush();
             }
         }
+
+        //Создаём универсальный узел(он же хост)
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             new HostBuilder()
+                //получаем файл конфигурации
                 .ConfigureAppConfiguration((hostContext, builder) =>
                 {
                     builder.AddJsonFile("appsettings.json", optional: true);
                 })
+                //настраиваем сервисы
                 .ConfigureServices((hostContext, services) =>
                     {
-                        Log.Logger = new LoggerConfiguration()
-                            .ReadFrom.Configuration(hostContext.Configuration)
-                            .CreateLogger();
                         services
                             .Configure<FilesSettings>(hostContext.Configuration.GetSection(nameof(FilesSettings)))
                             .AddHostedService<ConsoleApplication>()
@@ -50,8 +51,13 @@ namespace MachinesScheduler
 
                     }
                 )
+                //Добавляем логгирование, в данном случае Serilog
                 .ConfigureLogging((hostContext, logging) =>
                     {
+                        Log.Logger = new LoggerConfiguration()
+                            .ReadFrom.Configuration(hostContext.Configuration)
+                            .CreateLogger();
+
                         logging.AddSerilog();
                     });
     }

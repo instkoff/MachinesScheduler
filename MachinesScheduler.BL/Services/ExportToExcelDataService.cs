@@ -61,7 +61,6 @@ namespace MachinesScheduler.BL.Services
             catch (IOException e)
             {
                 _logger.LogError(e.Message, $"Не могу получить доступ к файлу График обработки.xlsx. Возможно файл открыт в другой программе.");
-                Console.ReadKey();
                 throw;
             }
         }
