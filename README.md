@@ -13,5 +13,5 @@
 * * *
 ## Инструкция
 Для корректной работы приложения в папке с программой должны лежать следующие файлы:
-+ Файлы исходных данных machine_tools.xlsx, nomenclatures.xlsx, parties.xlsx, times.xlsx, при желании имена файлов можно изменить в файле настроек программы appsettings.json.
++ Файлы исходных данных machine_tools.xlsx, nomenclatures.xlsx, parties.xlsx, times.xlsx, если вы желаете изменить имена файлов необходимо изменить их так же в файле настроек программы appsettings.json.
 + Файл настроек программы appsettings.json
